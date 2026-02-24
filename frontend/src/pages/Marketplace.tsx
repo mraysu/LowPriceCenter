@@ -1,9 +1,10 @@
-import { useState, useEffect, useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
+import { get, post } from "src/api/requests";
+import { Header } from "src/components/Header";
 import Product from "src/components/Product";
 import SearchBar from "src/components/SearchBar";
 import { FirebaseContext } from "src/utils/FirebaseProvider";
-import { get, post } from "src/api/requests";
 
 export function Marketplace() {
   const [products, setProducts] = useState<
@@ -50,6 +51,7 @@ export function Marketplace() {
 
   return (
     <>
+      <Header />
       <Helmet>
         <title>Low-Price Center Marketplace</title>
       </Helmet>
@@ -86,6 +88,7 @@ export function Marketplace() {
               </div>
             ))}
           </div>
+          <div className="min-h-screen bg-gray-200">this is a big component to test scrolling</div>
         </div>
       </main>
     </>

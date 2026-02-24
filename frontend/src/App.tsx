@@ -1,17 +1,15 @@
 import { HelmetProvider } from "react-helmet-async";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import { Footer } from "src/components/Footer";
 import { Navbar } from "src/components/Navbar";
+import { PrivateRoute } from "src/components/PrivateRoute";
 import { Home } from "src/pages";
+import { AddProduct } from "src/pages/AddProduct";
+import { EditProduct } from "src/pages/EditProduct";
+import { IndividualProductPage } from "src/pages/Individual-product-page";
 import { Marketplace } from "src/pages/Marketplace";
-
-import { PrivateRoute } from "../src/components/PrivateRoute";
-import { AddProduct } from "../src/pages/AddProduct";
-import { EditProduct } from "../src/pages/EditProduct";
-import { IndividualProductPage } from "../src/pages/Individual-product-page";
-import { PageNotFound } from "../src/pages/PageNotFound";
-import FirebaseProvider from "../src/utils/FirebaseProvider";
-import { SavedProducts } from "./pages/SavedProducts";
+import { PageNotFound } from "src/pages/PageNotFound";
+import { SavedProducts } from "src/pages/SavedProducts";
+import FirebaseProvider from "src/utils/FirebaseProvider";
 
 const router = createBrowserRouter([
   {
@@ -73,7 +71,6 @@ export default function App() {
           <div className="flex-grow">
             <RouterProvider router={router} />
           </div>
-          <Footer />
         </div>
       </FirebaseProvider>
     </HelmetProvider>
