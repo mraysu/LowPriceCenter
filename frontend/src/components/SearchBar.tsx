@@ -45,7 +45,7 @@ export default function SearchBar({ setProducts, setError }: Props) {
 
   useEffect(() => {
     setQuery(searchParams.get("query"));
-  }, []);
+  }, [searchParams]);
 
   return (
     <input

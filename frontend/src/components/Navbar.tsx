@@ -8,11 +8,12 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { HTMLAttributes, forwardRef, useContext, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { FirebaseContext } from "src/utils/FirebaseProvider";
 
 interface MiniSearchbarProps extends HTMLAttributes<HTMLDivElement> {
   open: boolean;
-  onSubmit: () => void;
+  onSubmit: React.FormEventHandler;
 }
 
 const MiniSearchbar = forwardRef<HTMLFormElement, MiniSearchbarProps>(
@@ -57,6 +58,7 @@ export function Navbar() {
   const menuRef = useRef<HTMLUListElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const searchRef = useRef<HTMLFormElement>(null);
+  const navigate = useNavigate();
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!isMobileMenuOpen);
@@ -67,9 +69,8 @@ export function Navbar() {
     e.preventDefault();
     const formData = new FormData(searchRef.current);
     const url = new URL("/products", window.location.origin);
-    url.searchParams.append("query", formData.get("query") as string);
-    console.log(url.toString());
-    window.location.href = url.toString();
+    url.searchParams.set("query", formData.get("query") as string);
+    navigate(url.pathname + url.search);
     return;
   };
 
