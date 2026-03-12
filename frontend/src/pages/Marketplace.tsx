@@ -88,7 +88,6 @@ export function Marketplace() {
               </div>
             ))}
           </div>
-          <div className="min-h-screen bg-gray-200">this is a big component to test scrolling</div>
         </div>
       </main>
     </>
