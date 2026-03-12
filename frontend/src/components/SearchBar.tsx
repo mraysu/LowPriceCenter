@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { get } from "src/api/requests";
 
 interface Props {
@@ -7,7 +8,8 @@ interface Props {
 }
 
 export default function SearchBar({ setProducts, setError }: Props) {
-  const [query, setQuery] = useState<string | null>(null);
+  const [searchParams] = useSearchParams();
+  const [query, setQuery] = useState<string | null>(searchParams.get("query") || "");
 
   useEffect(() => {
     /*
@@ -41,9 +43,14 @@ export default function SearchBar({ setProducts, setError }: Props) {
     search();
   }, [query]);
 
+  useEffect(() => {
+    setQuery(searchParams.get("query"));
+  }, []);
+
   return (
     <input
       type="text"
+      value={query ?? ""}
       onChange={(e) => setQuery(e.target.value)}
       placeholder="Search for a product..."
       className="w-full bg-[#F8F8F8] shadow-md p-3 px-6 mx-auto my-2 rounded-3xl"
