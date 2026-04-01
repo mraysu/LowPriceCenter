@@ -1,11 +1,12 @@
-import { useState, useEffect, useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
+import { get, post } from "src/api/requests";
+import { Header } from "src/components/Header";
 import { useNavigate } from "react-router-dom";
 import Product from "src/components/Product";
 import SearchBar from "src/components/SearchBar";
 import FilterSort from "src/components/FilterSort";
 import { FirebaseContext } from "src/utils/FirebaseProvider";
-import { get, post } from "src/api/requests";
 
 interface FilterState {
   minPrice?: number;
@@ -108,6 +109,7 @@ export function Marketplace() {
 
   return (
     <>
+      <Header />
       <Helmet>
         <title>Low-Price Center</title>
       </Helmet>

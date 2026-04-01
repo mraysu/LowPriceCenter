@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { get } from "src/api/requests";
 
 interface Props {
   setProducts: (query: string) => void;
@@ -6,12 +8,17 @@ interface Props {
 }
 
 export default function SearchBar({ setProducts, setError }: Props) {
-  const [query, setQuery] = useState<string | null>(null);
+  const [searchParams] = useSearchParams();
+  const [query, setQuery] = useState<string | null>(searchParams.get("query") || "");
 
   const handleChange = (value: string) => {
     setQuery(value);
     setProducts(value);
   };
+
+  useEffect(() => {
+    setQuery(searchParams.get("query"));
+  }, [searchParams]);
 
   return (
     <input

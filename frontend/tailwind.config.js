@@ -20,6 +20,7 @@ export default {
       fontFamily: {
         jetbrains: ["JetBrains Mono", "monospace"],
         inter: ["Inter", "sans-serif"],
+        rubik: ["Rubik", "sans-serif"],
       },
     },
   },
