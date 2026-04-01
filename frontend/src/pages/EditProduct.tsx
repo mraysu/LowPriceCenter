@@ -14,6 +14,7 @@ export function EditProduct() {
     images: string[];
     userEmail: string;
     description: string;
+    isMarkedSold: boolean;
     year: number;
     category: string;
     condition: string;
@@ -114,6 +115,7 @@ export function EditProduct() {
         body.append("category", productCategory.current.value);
         body.append("condition", productCondition.current.value);
         body.append("userEmail", user.email || "");
+        body.append("isMarkedSold", String(product?.isMarkedSold));
 
         // append existing image URLs
         existingImages.forEach((url) => body.append("existingImages", url));
