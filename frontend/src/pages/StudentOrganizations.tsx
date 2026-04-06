@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { Helmet } from "react-helmet-async";
 import { get } from "src/api/requests";
 import { FirebaseContext } from "src/utils/FirebaseProvider";
+import { useNavigate } from "react-router-dom";
 
 interface StudentOrganization {
   _id: string;
@@ -41,7 +42,8 @@ interface MerchItem {
 }
 
 export function StudentOrganizations() {
-  const { user } = useContext(FirebaseContext);
+  useContext(FirebaseContext);
+  const navigate = useNavigate();
   const [organizations, setOrganizations] = useState<StudentOrganization[]>([]);
   const [allMerch, setAllMerch] = useState<MerchItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -175,12 +177,20 @@ export function StudentOrganizations() {
                         </div>
                       </div>
                       {orgMerch.length > 0 && (
-                        <button
-                          onClick={() => setSelectedOrg(isExpanded ? null : org._id)}
-                          className="bg-[#00629B] text-white font-semibold font-inter py-2 px-4 shadow-lg hover:brightness-90 transition-all"
-                        >
-                          {isExpanded ? "Hide" : "View"} Merch ({orgMerch.length})
-                        </button>
+                        <div className="flex flex-col gap-2">
+                          <button
+                            onClick={() => navigate(`/student-organizations/${org._id}`)}
+                            className="bg-figma-teal text-white font-semibold font-inter py-2 px-4 shadow-lg hover:brightness-95 transition-all rounded-md"
+                          >
+                            View Profile
+                          </button>
+                          <button
+                            onClick={() => setSelectedOrg(isExpanded ? null : org._id)}
+                            className="bg-[#00629B] text-white font-semibold font-inter py-2 px-4 shadow-lg hover:brightness-90 transition-all rounded-md"
+                          >
+                            {isExpanded ? "Hide" : "View"} Merch ({orgMerch.length})
+                          </button>
+                        </div>
                       )}
                     </div>
 

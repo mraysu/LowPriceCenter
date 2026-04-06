@@ -1,6 +1,7 @@
 import { Response } from "express";
 import StudentOrganizationModel from "src/models/studentOrganization";
 import { AuthenticatedRequest } from "src/validators/authUserMiddleware";
+import { hasStudentOrgAccess } from "src/validators/studentOrgAccess";
 import mongoose from "mongoose";
 import { bucket } from "src/config/firebase";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
@@ -13,6 +14,21 @@ const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB limit
 }).single("profilePicture");
+
+/**
+ * Check whether the authenticated user can access "My Organization" (allowed email list).
+ */
+export const getStudentOrgCanAccess = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: "Authentication required." });
+    }
+    const canAccess = hasStudentOrgAccess(req.user.userEmail || "");
+    res.status(200).json({ canAccess });
+  } catch (error) {
+    res.status(500).json({ message: "Error checking access", error });
+  }
+};
 
 /**
  * Get all student organizations

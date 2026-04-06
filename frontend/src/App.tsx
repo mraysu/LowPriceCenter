@@ -14,6 +14,7 @@ import FirebaseProvider from "../src/utils/FirebaseProvider";
 import { SavedProducts } from "./pages/SavedProducts";
 import { StudentOrgProfile } from "./pages/StudentOrgProfile";
 import { StudentOrganizations } from "./pages/StudentOrganizations";
+import { StudentOrganizationPublicProfile } from "./pages/StudentOrganizationPublicProfile";
 
 const router = createBrowserRouter([
   {
@@ -73,6 +74,14 @@ const router = createBrowserRouter([
     element: (
       <PrivateRoute>
         <StudentOrganizations />
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "/student-organizations/:id",
+    element: (
+      <PrivateRoute>
+        <StudentOrganizationPublicProfile />
       </PrivateRoute>
     ),
   },

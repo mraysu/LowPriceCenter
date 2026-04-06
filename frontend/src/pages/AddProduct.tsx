@@ -57,11 +57,6 @@ export function AddProduct() {
     e.preventDefault();
     try {
       if (productName.current && productPrice.current && productDescription.current && user) {
-        let images;
-        if (productImages.current && productImages.current.files) {
-          images = productImages.current.files[0];
-        }
-
         const body = new FormData();
         body.append("name", productName.current.value);
         body.append("price", productPrice.current.value);

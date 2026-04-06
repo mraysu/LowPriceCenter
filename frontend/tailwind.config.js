@@ -12,6 +12,12 @@ export default {
         "ucsd-blue": "#00629B",
         "ucsd-darkblue": "#182B49",
         "ucsd-gold": "#FFCD00",
+        // Figma palette
+        "figma-sand": "#F9D488",
+        "figma-orange": "#F4A71D",
+        "figma-mint": "#53DCCE",
+        "figma-teal": "#0E6F8F",
+        "figma-charcoal": "#222222",
       },
       fontFamily: {
         jetbrains: ["JetBrains Mono", "monospace"],

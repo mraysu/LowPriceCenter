@@ -37,11 +37,13 @@ export function StudentOrgProfile() {
 
   const { user } = useContext(FirebaseContext);
   const [organization, setOrganization] = useState<StudentOrganization | null>(null);
+  const [canAccessMyOrg, setCanAccessMyOrg] = useState<boolean | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
   const [fileError, setFileError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [activeTab, setActiveTab] = useState<"selling" | "likes" | "saves">("selling");
 
   const organizationNameRef = useRef<HTMLInputElement>(null);
   const bioRef = useRef<HTMLTextAreaElement>(null);
@@ -71,34 +73,43 @@ export function StudentOrgProfile() {
   const [newMerchImage, setNewMerchImage] = useState<File | null>(null);
 
   useEffect(() => {
-    const fetchOrganization = async () => {
+    const checkAccessAndFetch = async () => {
       if (!user?.uid) {
+        setCanAccessMyOrg(false);
         setLoading(false);
         return;
       }
 
       try {
         setLoading(true);
+        const accessRes = await get("/api/student-organizations/can-access");
+        const accessData = await accessRes.json();
+        if (!accessData.canAccess) {
+          setCanAccessMyOrg(false);
+          setLoading(false);
+          return;
+        }
+        setCanAccessMyOrg(true);
+
         const res = await get(`/api/student-organizations/firebase/${user.uid}`);
         if (res.ok) {
           const data = await res.json();
           setOrganization(data);
           setProfilePicturePreview(data.profilePicture || "");
         } else if (res.status === 404) {
-          // Organization doesn't exist yet, that's okay
           setOrganization(null);
         } else {
           setError("Failed to load organization profile");
         }
       } catch (err) {
-        // Organization doesn't exist, that's okay
+        setCanAccessMyOrg((prev) => (prev === true ? true : false));
         setOrganization(null);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchOrganization();
+    checkAccessAndFetch();
   }, [user]);
 
   useEffect(() => {
@@ -233,12 +244,6 @@ export function StudentOrgProfile() {
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const handleEdit = () => {
-    setIsEditing(true);
-    setNewProfilePicture(null);
-    setProfilePicturePreview(organization?.profilePicture || "");
   };
 
   const handleCancel = () => {
@@ -394,6 +399,21 @@ export function StudentOrgProfile() {
         </Helmet>
         <div className="w-full mt-12 mb-6">
           <p className="text-center font-inter">Loading...</p>
+        </div>
+      </>
+    );
+  }
+
+  if (canAccessMyOrg === false) {
+    return (
+      <>
+        <Helmet>
+          <title>Access denied - Low-Price Center</title>
+        </Helmet>
+        <div className="w-full mt-12 mb-6 max-w-xl mx-auto p-4 text-center">
+          <p className="font-inter text-gray-700">
+            You don&apos;t have access to My Organization. Only approved organization accounts can create and manage a profile.
+          </p>
         </div>
       </>
     );
@@ -583,90 +603,130 @@ export function StudentOrgProfile() {
       <Helmet>
         <title>{organization?.organizationName || "Student Organization"} - Low-Price Center</title>
       </Helmet>
-      <div className="w-full mt-12 mb-20">
+      <div className="w-full mt-6 mb-20">
         <div className="max-w-6xl mx-auto px-4">
-          {/* Profile Header Section */}
-          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-            <div className="flex items-start gap-6 mb-4">
-              {/* Profile Picture */}
-              <div className="flex-shrink-0">
-                {organization?.profilePicture ? (
-                  <img
-                    src={organization.profilePicture}
-                    alt={organization.organizationName}
-                    className="w-24 h-24 object-cover rounded-full border-2 border-gray-300"
-                  />
-                ) : (
-                  <div className="w-24 h-24 rounded-full bg-gray-200 border-2 border-gray-300 flex items-center justify-center">
-                    <span className="text-gray-400 text-2xl font-inter">?</span>
-                  </div>
-                )}
+          <div className="bg-white rounded-2xl border-2 border-figma-mint shadow-md overflow-hidden">
+            {/* Header band */}
+            <div className="bg-figma-sand border-b-2 border-figma-orange h-28 md:h-32 relative">
+              {/* profile image */}
+              <div className="absolute left-6 md:left-10 top-10 md:top-12">
+                <div className="w-24 h-24 md:w-28 md:h-28 rounded-full bg-white p-1 shadow-sm">
+                  {organization?.profilePicture ? (
+                    <img
+                      src={organization.profilePicture}
+                      alt={organization.organizationName}
+                      className="w-full h-full object-cover rounded-full"
+                    />
+                  ) : (
+                    <div className="w-full h-full rounded-full bg-gray-200" />
+                  )}
+                </div>
               </div>
 
-              {/* Organization Name and Rating */}
-              <div className="flex-1">
-                <h1 className="text-3xl font-bold font-inter mb-2">
-                  {organization?.organizationName || "Organization Name"}
+              {/* title */}
+              <div className="absolute left-36 md:left-44 top-6 md:top-7">
+                <h1 className="font-inter font-extrabold text-2xl md:text-4xl leading-tight text-black">
+                  {organization?.organizationName || "Username"}
                 </h1>
-                <StarRating rating={0} />
               </div>
 
-              {/* Edit Button */}
-              <button
-                onClick={() => {
-                  setIsEditing(true);
-                  setShowEditModal(true);
-                }}
-                className="bg-[#00629B] text-white font-semibold font-inter py-2 px-4 shadow-lg hover:brightness-90 transition-all"
-              >
-                Edit Profile
-              </button>
+              {/* edit */}
+              <div className="absolute right-6 md:right-10 top-6 md:top-7">
+                <button
+                  onClick={() => {
+                    setIsEditing(true);
+                    setShowEditModal(true);
+                  }}
+                  className="bg-figma-orange text-black font-inter font-extrabold px-8 py-2 rounded-md shadow-sm hover:brightness-95 transition-all"
+                >
+                  Edit
+                </button>
+              </div>
             </div>
 
-          </div>
+            {/* Info row */}
+            <div className="px-6 md:px-10 pt-8 pb-4">
+              <StarRating rating={0} />
+              <div className="mt-2 text-sm md:text-base text-gray-400 font-inter leading-snug">
+                {organization?.bio ? <div className="truncate">{organization.bio}</div> : null}
+                {organization?.contactInfo?.email ? (
+                  <div className="truncate">{organization.contactInfo.email}</div>
+                ) : null}
+                {organization?.merchLocation ? <div className="truncate">{organization.merchLocation}</div> : null}
+              </div>
+            </div>
 
-          {/* Content Section - Products */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-2xl font-jetbrains font-medium mb-6">Products</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                  {/* Product Cards */}
+            {/* Tabs */}
+            <div className="px-6 md:px-10 pb-4">
+              <div className="flex gap-10">
+                <button
+                  onClick={() => setActiveTab("selling")}
+                  className={[
+                    "font-inter text-xl md:text-2xl font-semibold",
+                    activeTab === "selling"
+                      ? "text-figma-charcoal underline underline-offset-8"
+                      : "text-gray-400",
+                  ].join(" ")}
+                >
+                  Selling
+                </button>
+                <button
+                  onClick={() => setActiveTab("likes")}
+                  className={[
+                    "font-inter text-xl md:text-2xl font-semibold",
+                    activeTab === "likes"
+                      ? "text-figma-charcoal underline underline-offset-8"
+                      : "text-gray-400",
+                  ].join(" ")}
+                >
+                  Likes
+                </button>
+                <button
+                  onClick={() => setActiveTab("saves")}
+                  className={[
+                    "font-inter text-xl md:text-2xl font-semibold",
+                    activeTab === "saves"
+                      ? "text-figma-charcoal underline underline-offset-8"
+                      : "text-gray-400",
+                  ].join(" ")}
+                >
+                  Saves
+                </button>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="px-6 md:px-10 pb-10">
+              {activeTab !== "selling" ? (
+                <div className="py-10 text-center text-gray-500 font-inter">Nothing to show yet.</div>
+              ) : (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                   {merchItems.map((merch) => (
-                    <div
-                      key={merch._id}
-                      className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow relative group"
-                    >
-                      <div className="aspect-square bg-gray-200 overflow-hidden">
+                    <div key={merch._id} className="bg-white relative group">
+                      <div className="aspect-square rounded-2xl bg-gray-100 overflow-hidden shadow-sm">
                         {merch.image ? (
-                          <img
-                            src={merch.image}
-                            alt={merch.name}
-                            className="w-full h-full object-cover"
-                          />
+                          <img src={merch.image} alt={merch.name} className="w-full h-full object-cover" />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                            <span className="text-gray-400">No Image</span>
-                          </div>
+                          <div className="w-full h-full bg-gray-100" />
                         )}
                       </div>
-                      <div className="p-3">
-                        <p className="font-inter font-semibold text-base mb-1 truncate">{merch.name}</p>
-                        <p className="font-inter font-bold text-[#00629B] text-lg">
-                          ${merch.price.toFixed(2)}
-                        </p>
+                      <div className="flex items-center justify-between pt-2">
+                        <div className="font-inter font-bold text-sm md:text-base text-black truncate">
+                          {merch.name}
+                        </div>
+                        <div className="font-inter font-extrabold text-sm md:text-base text-black">
+                          ${merch.price.toFixed(0)}
+                        </div>
                       </div>
+
                       {/* Edit/Delete buttons on hover */}
                       <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
                         <button
                           onClick={() => startEditingMerch(merch)}
-                          className="bg-[#00629B] text-white p-2 rounded-full shadow-lg hover:brightness-90 transition-all"
+                          className="bg-figma-teal text-white p-2 rounded-full shadow-sm hover:brightness-95 transition-all"
                           title="Edit"
                         >
-                          <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path
                               strokeLinecap="round"
                               strokeLinejoin="round"
@@ -677,15 +737,10 @@ export function StudentOrgProfile() {
                         </button>
                         <button
                           onClick={() => handleDeleteMerch(merch._id)}
-                          className="bg-red-600 text-white p-2 rounded-full shadow-lg hover:brightness-90 transition-all"
+                          className="bg-figma-charcoal text-white p-2 rounded-full shadow-sm hover:brightness-95 transition-all"
                           title="Delete"
                         >
-                          <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path
                               strokeLinecap="round"
                               strokeLinejoin="round"
@@ -701,16 +756,18 @@ export function StudentOrgProfile() {
                   {/* Add Product Button */}
                   <button
                     onClick={() => setIsAddingMerch(true)}
-                    className="aspect-square border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors flex items-center justify-center"
+                    className="aspect-square rounded-2xl bg-gray-100 hover:bg-gray-200 transition-colors flex items-center justify-center shadow-sm"
+                    aria-label="Add product"
                   >
                     <div className="text-center">
-                      <div className="w-12 h-12 mx-auto mb-2 flex items-center justify-center">
-                        <span className="text-4xl text-gray-400 font-light">+</span>
+                      <div className="w-16 h-16 mx-auto flex items-center justify-center">
+                        <span className="text-6xl text-gray-300 font-light">+</span>
                       </div>
-                      <p className="text-gray-500 font-inter text-sm">Add Product</p>
                     </div>
                   </button>
                 </div>
+              )}
+            </div>
 
                 {/* Add Merch Form Modal */}
                 {isAddingMerch && (

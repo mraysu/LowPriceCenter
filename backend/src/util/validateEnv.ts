@@ -11,4 +11,6 @@ export default cleanEnv(process.env, {
   MONGODB_URI: str(),
   FIREBASE_PRIVATE_KEY_BASE64: str(),
   FIREBASE_PROJECT_ID: str(),
+  /** Comma-separated list of emails allowed to create/manage student organizations. Empty = no one. */
+  STUDENT_ORG_ALLOWED_EMAILS: str({ default: "" }),
 });

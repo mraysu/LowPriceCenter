@@ -128,7 +128,7 @@ export function IndividualProductPage() {
   const totalMinutes = Math.ceil(msLeft / (1000 * 60)); // convert ms → minutes
   const hoursLeft = Math.floor(totalMinutes / 60);
   const minutesLeft = totalMinutes % 60;
-  const [tick, setTick] = useState(0);
+  const [, setTick] = useState(0);
   useEffect(() => {
     if (!isCooling) return;
     const iv = setInterval(() => setTick((t) => t + 1), 60_000); // 60 000 ms = 1 min
