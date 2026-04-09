@@ -2,13 +2,19 @@ import { faPenToSquare, faCheck, faArrowUp } from "@fortawesome/free-solid-svg-i
 import { faHeart as faHeartSolid } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useContext, useEffect, useState } from "react";
+import { Suspense, lazy, useContext, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { get, patch, post } from "src/api/requests";
 import { FirebaseContext } from "src/utils/FirebaseProvider";
 import EmblaCarousel from "src/components/EmblaCarousel";
 import { EmblaOptionsType } from "embla-carousel";
+
+const ListingMap = lazy(() => import("src/components/ListingMap"));
+const priceCenterCoordinates = {
+  lat: 32.8793,
+  lng: -117.2367,
+};
 
 export function IndividualProductPage() {
   const navigate = useNavigate();
@@ -311,6 +317,28 @@ export function IndividualProductPage() {
                   ))}
                 </div>
               )}
+              <section className="mt-4">
+                <h2 className="font-inter text-lg font-semibold text-[#182B49]">Pickup Location</h2>
+                <p className="mt-2 font-inter text-sm leading-6 text-[#4B5563]">
+                  This is a temporary shared pickup-location placeholder until listing-specific
+                  locations are connected to the backend.
+                </p>
+                <Suspense
+                  fallback={
+                    <div
+                      className="mt-4 h-64 animate-pulse rounded-2xl border border-gray-200 bg-[#F8F8F8]"
+                      aria-label="Loading pickup map section"
+                    />
+                  }
+                >
+                  <ListingMap
+                    center={priceCenterCoordinates}
+                    className="mt-4"
+                    label="UCSD Price Center"
+                    markerTitle="Pickup location"
+                  />
+                </Suspense>
+              </section>
               {!hasPermissions && (
                 <div
                   onMouseEnter={() => setIsHovered(true)}
