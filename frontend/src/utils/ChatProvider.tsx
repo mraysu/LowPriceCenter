@@ -36,7 +36,7 @@ export default function ChatProvider({ children }: { children: ReactNode }) {
 
   const joinConversation = (id: string) => {
     socket?.emit("conversation:join", { id }, (response: SocketResponse) => {
-      if (!isOk(response)) alert(`Could not find conversation: ${JSON.stringify(response.err)}`); // please please please remember to change this before final push
+      if (!isOk(response)) alert(`Could not find conversation: ${JSON.stringify(response.err)}`);
       if (!setMessages) return;
       setMessages(
         (response.body as UserMessage[]).map((msg) => {
