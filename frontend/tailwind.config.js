@@ -13,16 +13,10 @@ export default {
         // "ucsd-blue": "#00629B",
         "ucsd-blue": "#0E7395",
         "ucsd-darkblue": "#182B49",
-<<<<<<< HEAD
         "ucsd-gold": "#FFCD00",
         "default-bg": "#FFFFFF",
         "default-teal": "#57DBCE",
         "default-gray": "#D9D9D9",
-=======
-        // Figma mockup uses different gold
-        // "ucsd-gold": "#FFCD00",
-        "ucsd-gold": "#F6AE2D",
->>>>>>> mraysu/dev-fixes
       },
       fontFamily: {
         jetbrains: ["JetBrains Mono", "monospace"],

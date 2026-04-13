@@ -18,6 +18,8 @@ export function Messages(): ReactNode {
     const participants = convo.participantsPopulated.filter(
       (item) => item.displayName !== user?.displayName,
     );
+
+    const recentMessageContent = convo.lastMessage?.content.replace(/\n/g, " ");
     return (
       <button
         className={`w-full text-left flex flex-row p-8 border-b-2 hover:bg-default-gray ${currConversationIdRef?.current === convo._id ? "bg-default-gray" : ""}`}
@@ -29,12 +31,10 @@ export function Messages(): ReactNode {
               ? participants.map((p) => p.displayName).join(", ")
               : user?.displayName}
           </div>
-          <div className="text-gray-500 truncate text-[16px] font-medium">
+          <div className="text-gray-500 truncate text-[16px] font-medium whitespace-nowrap">
             {convo.lastMessage
-              ? formatDateMMDDYY(convo.lastMessage.updatedAt) + " " + convo.lastMessage.content
-              : " "
-            }
-            
+              ? formatDateMMDDYY(convo.lastMessage.updatedAt) + " " + recentMessageContent
+              : " "}
           </div>
         </div>
       </button>
@@ -42,7 +42,7 @@ export function Messages(): ReactNode {
   }
 
   return (
-    <div className="w-full h-[80vh] font-rubik flex ">
+    <div className="w-full mt-24 h-[80vh] font-rubik flex ">
       <div className="m-8 flex-1 flex flex-col rounded-3xl shadow-md shadow-default-teal min-w-0">
         <div className="px-6 pt-4 text-[40px] h-[12%] font-medium">{`Messages${loading ? ": loading..." : ""}`}</div>
         <div className="flex flex-row h-[88%] border-t-2">

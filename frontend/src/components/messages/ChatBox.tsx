@@ -3,6 +3,7 @@ import { SocketResponse, isOk } from "src/components/messages/api";
 import { ChatContext } from "src/utils/ChatProvider";
 import { formatDateMMDDYYHHMM } from "src/utils/Date";
 import { FirebaseContext } from "src/utils/FirebaseProvider";
+import { chatRawToJSX } from "src/utils/Text";
 
 const chatBoxStyling = "rounded rounded-lg p-3 w-fit max-w-[75%] text-wrap break-all";
 const senderStyling = chatBoxStyling + " bg-default-teal";
@@ -22,6 +23,7 @@ export function ChatBox(): ReactNode {
   const handleSendMessage = async () => {
     if (!user) return;
     if (!input) return;
+
     setInput("");
     socket?.emit(
       "message:send",
@@ -74,11 +76,13 @@ export function ChatBox(): ReactNode {
             );
             return (
               <div
-                className={`flex group flex-row w-full ${msg.sender && "justify-end"}`}
+                className={`flex group flex-row w-full whitespace-pre-line ${msg.sender && "justify-end"}`}
                 key={idx}
               >
                 {msg.sender && date}
-                <div className={msg.sender ? senderStyling : receiverStyling}>{msg.content}</div>
+                <div className={msg.sender ? senderStyling : receiverStyling}>
+                  {chatRawToJSX(msg.content)}
+                </div>
                 {!msg.sender && date}
               </div>
             );
