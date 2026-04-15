@@ -23,7 +23,6 @@ const getConversationsByUser = async (req: AuthenticatedRequest, res: Response) 
 const createConversation = async (req: AuthenticatedRequest, res: Response) => {
   try {
     if (!req.user) return res.status(404).json({ message: "User not found" });
-    console.log(req.body);
     const emails: string[] = (req.body as CreateConversationRequest).participantEmails ?? []; // allow user to make conversation with themself
 
     // extract userids, given participant email list
@@ -38,14 +37,12 @@ const createConversation = async (req: AuthenticatedRequest, res: Response) => {
 
     const participants = users.map((u) => u.firebaseUid);
     participants.push(req.user.firebaseUid);
-    // END extract userids
 
     // Check conversation does not yet exist
     const existingConversation = await ConversationModel.findOne({
       participants: participants.sort(),
     });
     if (existingConversation) return res.status(200).json(existingConversation);
-    // END check conversation does not yet exist
 
     const newConversation = await ConversationModel.create({
       participants,

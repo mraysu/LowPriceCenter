@@ -18,7 +18,7 @@ import { FirebaseContext } from "src/utils/FirebaseProvider";
 export function IndividualProductPage() {
   const navigate = useNavigate();
   const { user } = useContext(FirebaseContext);
-  const { setCurrConversationId, fetchConversations, joinConversation } = useContext(ChatContext);
+  const { fetchConversations, joinConversation } = useContext(ChatContext);
   const { id } = useParams();
   const [product, setProduct] = useState<{
     name: string;
@@ -132,15 +132,18 @@ export function IndividualProductPage() {
   };
 
   const handleSendSellerMessage = async () => {
-    if (!setCurrConversationId) return;
     const receiver = product?.userEmail;
     if (!receiver) return;
-    const res = await post("/api/messages/conversation", { participantEmails: [receiver] });
-    const data = await res.json();
-    fetchConversations();
-    joinConversation(data._id);
+    try {
+      const res = await post("/api/conversations", { participantEmails: [receiver] });
+      const data = await res.json();
+      fetchConversations();
+      joinConversation(data._id);
 
-    navigate("/messages");
+      navigate("/messages");
+    } catch (err) {
+      console.log(err);
+    }
   };
   const handleMarkSold = async () => {
     if (!product) return;

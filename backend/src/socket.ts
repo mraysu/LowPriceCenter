@@ -14,7 +14,6 @@ const io = new Server(httpServer, {
   },
 });
 
-// auth protection bc we're good little coders :)
 io.use(async (socket, next) => {
   const token = socket.handshake.auth.token;
 
