@@ -1,9 +1,8 @@
-import { faHeart } from "@fortawesome/free-regular-svg-icons";
+import { faComment, faHeart } from "@fortawesome/free-regular-svg-icons";
 import {
   faBars,
   faCartShopping,
   faMagnifyingGlass,
-  faUser,
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -64,6 +63,14 @@ export function Navbar() {
   const iconBtn =
     "w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:text-ucsd-blue hover:border-ucsd-blue transition";
 
+  const handleIconClick = (path: string) => {
+    if (user) {
+      navigate(path);
+    } else {
+      openGoogleAuthentication();
+    }
+  };
+
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     if (!searchRef.current) return;
     e.preventDefault();
@@ -117,133 +124,76 @@ export function Navbar() {
           <span className="text-3xl text-ucsd-blue">Low </span>
           <span className="text-3xl text-ucsd-gold">Price Center</span>
         </button>
-        <div
-          className={`hidden ${!user && "opacity-0"} md:flex flex-row gap-3 items-center justify-center`}
-        >
+        <div className="hidden md:flex flex-row gap-6 items-center justify-center">
           {[
             { label: "Shop", path: "/products" },
-            { label: "Sell", path: "/sell" },
-            { label: "Student Organizations", path: "/organizations" },
+            { label: "Sell", path: "/add-product" },
+            { label: "Student Organizations", path: "/student-organizations" },
           ].map((val) => (
             <button
               key={val.label}
-              className={`${window.location.pathname === val.path ? selectedTabStyling : tabStyling}`}
-              onClick={() => {
-                window.location.href = val.path;
-              }}
+              className={`font-inter text-sm ${window.location.pathname === val.path ? selectedTabStyling : tabStyling} transition-colors`}
+              onClick={() => handleIconClick(val.path)}
             >
               {val.label}
             </button>
           ))}
         </div>
-        <div className="hidden md:flex items-center text-2xl space-x-4">
+
+        <div className="hidden md:flex items-center gap-2.5">
           <button
-            onClick={() => (window.location.href = "/saved-products")}
-            className={`${!user && "opacity-0"} w-12 h-12 text-xl flex items-center justify-center border-2 hover:bg-gray-300 rounded-full transition-colors`}
+            onClick={() => handleIconClick("/saved-products")}
+            title="Saved"
+            aria-label="Saved products"
+            className={iconBtn}
           >
-            <FontAwesomeIcon icon={faHeart} aria-label="Heart Icon" />
+            <FontAwesomeIcon icon={faHeart} className="text-[16px]" />
           </button>
 
           <div className="relative">
             <button
-              onClick={() => {
-                setSearchbarOpen(true);
-              }}
-              className={`${!user && "opacity-0"} w-12 h-12 text-xl flex items-center justify-center border-2 hover:bg-gray-300 rounded-full transition-colors`}
+              onClick={() => setSearchbarOpen(true)}
+              title="Search"
+              aria-label="Search"
+              className={iconBtn}
             >
-              <FontAwesomeIcon icon={faMagnifyingGlass} aria-label="faMagnifyingGlass" />
+              <FontAwesomeIcon icon={faMagnifyingGlass} className="text-[16px]" />
             </button>
             <MiniSearchbar open={isSearchBarOpen} ref={searchRef} onSubmit={handleSearch} />
           </div>
 
           <button
-            onClick={() => (window.location.href = "/products")}
-            className={`${!user && "opacity-0"} w-12 h-12 text-xl flex items-center justify-center border-2 hover:bg-gray-300 rounded-full transition-colors`}
-          >
-            <FontAwesomeIcon icon={faCartShopping} aria-label="Shopping Cart" />
-          </button>
-
-          <button
-            onClick={user ? signOutFromFirebase : openGoogleAuthentication}
-            className="px-4 py-1 bg-transparent border-transparent rounded transition-colors"
-          >
-            {user ? "Log Out" : "Log In"}
-          </button>
-        </div>
-        <li>
-          <button
-            onClick={() => (window.location.href = "/add-product")}
-            className="hover:text-ucsd-blue transition-colors"
-          >
-            Sell
-          </button>
-        </li>
-        <li>
-          <button
-            onClick={() => (window.location.href = "/student-organizations")}
-            className="hover:text-ucsd-blue transition-colors"
-          >
-            Student Organizations
-          </button>
-        </li>
-
-        {/* ── Desktop right icons ── */}
-        <div className="hidden md:flex items-center gap-2.5">
-          {/* Saved / Heart */}
-          <button
-            onClick={() => (window.location.href = "/saved-products")}
-            title="Saved"
+            onClick={() => handleIconClick("/products")}
+            title="Cart"
+            aria-label="Cart"
             className={iconBtn}
           >
-            <svg
-              className="w-[18px] h-[18px]"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-            </svg>
+            <FontAwesomeIcon icon={faCartShopping} className="text-[16px]" />
           </button>
 
-          {/* Cart / Products */}
           <button
-            onClick={() => (window.location.href = "/products")}
-            title="Products"
+            onClick={() => handleIconClick("/messages")}
+            title="Messages"
+            aria-label="Messages"
             className={iconBtn}
           >
-            <svg
-              className="w-[18px] h-[18px]"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="9" cy="21" r="1" />
-              <circle cx="20" cy="21" r="1" />
-              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-            </svg>
+            <FontAwesomeIcon icon={faComment} className="text-[16px]" />
           </button>
 
-          {/* User avatar / Sign in */}
           {user ? (
             <button
               onClick={signOutFromFirebase}
               title="Sign Out"
-              className="w-9 h-9 rounded-full bg-ucsd-blue text-white flex items-center justify-center font-jetbrains font-bold text-sm hover:brightness-90 transition"
+              className="ml-2 w-9 h-9 rounded-full bg-ucsd-blue text-white flex items-center justify-center font-jetbrains font-bold text-sm hover:brightness-90 transition"
             >
               {user.displayName?.[0]?.toUpperCase() ?? "U"}
             </button>
           ) : (
             <button
               onClick={openGoogleAuthentication}
-              className="font-inter text-sm font-semibold text-ucsd-blue hover:underline px-1"
+              className="ml-2 font-inter text-sm font-semibold text-ucsd-blue hover:underline px-1"
             >
-              Sign In
+              Log In
             </button>
           )}
         </div>
