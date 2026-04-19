@@ -54,6 +54,7 @@ export function Navbar() {
   const { user, signOutFromFirebase, openGoogleAuthentication } = useContext(FirebaseContext);
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isSearchBarOpen, setSearchbarOpen] = useState<boolean>(false);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const menuRef = useRef<HTMLUListElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const searchRef = useRef<HTMLFormElement>(null);
@@ -181,13 +182,35 @@ export function Navbar() {
           </button>
 
           {user ? (
-            <button
-              onClick={signOutFromFirebase}
-              title="Sign Out"
-              className="ml-2 w-9 h-9 rounded-full bg-ucsd-blue text-white flex items-center justify-center font-jetbrains font-bold text-sm hover:brightness-90 transition"
+            <div
+              className="relative ml-2"
+              onMouseEnter={() => setIsProfileDropdownOpen(true)}
+              onMouseLeave={() => setIsProfileDropdownOpen(false)}
             >
-              {user.displayName?.[0]?.toUpperCase() ?? "U"}
-            </button>
+              <button
+                title="Profile"
+                className="w-9 h-9 rounded-full bg-ucsd-blue text-white flex items-center justify-center font-jetbrains font-bold text-sm hover:brightness-90 transition"
+              >
+                {user.displayName?.[0]?.toUpperCase() ?? "U"}
+              </button>
+              {isProfileDropdownOpen && (
+                <div className="absolute right-0 top-full w-40 bg-white text-black shadow-lg rounded-lg py-2 z-[60]">
+                  <a
+                    href="/profile"
+                    className="block w-full text-left px-4 py-2 text-sm font-inter hover:bg-gray-100 transition-colors"
+                  >
+                    My Profile
+                  </a>
+                  <hr className="my-1 border-gray-200" />
+                  <button
+                    onClick={signOutFromFirebase}
+                    className="w-full text-left px-4 py-2 text-sm font-inter hover:bg-red-50 text-red-600 transition-colors"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              )}
+            </div>
           ) : (
             <button
               onClick={openGoogleAuthentication}

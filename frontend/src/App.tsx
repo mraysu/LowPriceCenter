@@ -9,6 +9,7 @@ import { EditProduct } from "src/pages/EditProduct";
 import { IndividualProductPage } from "src/pages/Individual-product-page";
 import { Marketplace } from "src/pages/Marketplace";
 import { PageNotFound } from "src/pages/PageNotFound";
+import { Profile } from "src/pages/Profile";
 import { SavedProducts } from "src/pages/SavedProducts";
 import ChatProvider from "src/utils/ChatProvider";
 import FirebaseProvider from "src/utils/FirebaseProvider";
@@ -27,6 +28,14 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <Marketplace />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/profile",
+        element: (
+          <PrivateRoute>
+            <Profile />
           </PrivateRoute>
         ),
       },
@@ -93,3 +102,4 @@ export default function App() {
     </HelmetProvider>
   );
 }
+
