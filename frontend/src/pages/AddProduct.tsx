@@ -1,11 +1,15 @@
 import { FormEvent, useContext, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
+
 import { post } from "src/api/requests";
+import PickupLocationField from "src/components/PickupLocationField";
 import { FirebaseContext } from "src/utils/FirebaseProvider";
+import { hasGoogleMapsApiKey } from "src/utils/googleMaps";
+import type { PickupLocation } from "src/utils/pickupLocation";
 
 export function AddProduct() {
-  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 
   const productName = useRef<HTMLInputElement>(null);
   const productPrice = useRef<HTMLInputElement>(null);
@@ -15,18 +19,17 @@ export function AddProduct() {
   const productCondition = useRef<HTMLSelectElement>(null);
   const productImages = useRef<HTMLInputElement>(null);
 
-  
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: currentYear - 1950 }, (_, i) => currentYear - i);
 
-
   const categories = [
-  'Electronics',
-  'School Supplies',
-  'Dorm Essentials',
-  'Furniture',
-  'Clothes',
-  'Miscellaneous'];
+    "Electronics",
+    "School Supplies",
+    "Dorm Essentials",
+    "Furniture",
+    "Clothes",
+    "Miscellaneous",
+  ];
 
   const conditions = ["New", "Used"];
 
@@ -36,6 +39,9 @@ export function AddProduct() {
   const [newFiles, setNewFiles] = useState<File[]>([]);
   const [newPreviews, setNewPreviews] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [pickupLocation, setPickupLocation] = useState<PickupLocation | null>(null);
+  const [pickupLocationError, setPickupLocationError] = useState<string | null>(null);
+  const [hasPendingPickupSelection, setHasPendingPickupSelection] = useState(false);
   const navigate = useNavigate();
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,7 +59,7 @@ export function AddProduct() {
     });
 
     if (validFiles.length < files.length) {
-      setFileError("Files larger than 5 MB were skipped.");
+      setFileError("Files larger than 5 MB were skipped.");
     } else {
       setFileError(null);
     }
@@ -70,11 +76,24 @@ export function AddProduct() {
   };
 
   const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
     if (isSubmitting) return;
     setIsSubmitting(true);
-    e.preventDefault();
     try {
-      if (productName.current && productPrice.current && productDescription.current && productYear.current && productCategory.current && productCondition.current && user) {
+      if (
+        productName.current &&
+        productPrice.current &&
+        productDescription.current &&
+        productYear.current &&
+        productCategory.current &&
+        productCondition.current &&
+        user
+      ) {
+        if (hasGoogleMapsApiKey && hasPendingPickupSelection) {
+          setPickupLocationError("Select a Google suggestion or clear the pickup address field.");
+          return;
+        }
+
         const body = new FormData();
         body.append("name", productName.current.value);
         body.append("price", productPrice.current.value);
@@ -92,6 +111,13 @@ export function AddProduct() {
 
         newFiles.forEach((file) => body.append("images", file));
 
+        if (pickupLocation) {
+          body.append("pickupAddress", pickupLocation.address);
+          body.append("pickupPlaceId", pickupLocation.placeId);
+          body.append("pickupLat", pickupLocation.lat.toString());
+          body.append("pickupLng", pickupLocation.lng.toString());
+        }
+
         const res = await post("/api/products", body);
         if (res.ok) {
           setError(false);
@@ -100,6 +126,8 @@ export function AddProduct() {
       } else throw Error();
     } catch {
       setError(true);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -124,12 +152,18 @@ export function AddProduct() {
               <div className="inline-flex flex-wrap justify-center gap-2 ">
                 {newPreviews.map((src, idx) => (
                   <div key={idx} className="relative m-1 w-24 h-24">
-                    <img src={src} className="w-full h-full object-cover rounded-md" />
+                    <img
+                      src={src}
+                      alt={`Product preview ${idx + 1}`}
+                      className="w-full h-full object-cover rounded-md"
+                    />
                     <button
                       type="button"
                       onClick={() => removePreview(idx)}
+                      aria-label={`Remove product preview ${idx + 1}`}
                       className="absolute top-0 right-0 bg-red-600 text-white rounded-full text-xs px-1"
                     >
+                      ×
                     </button>
                   </div>
                 ))}
@@ -141,6 +175,7 @@ export function AddProduct() {
             htmlFor="productImages"
             className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors"
           >
+            <span className="sr-only">Upload product images</span>
             <div className="flex flex-col items-center justify-center pt-5 pb-6">
               <svg
                 className="w-10 h-10 mb-3 text-gray-400"
@@ -264,7 +299,10 @@ export function AddProduct() {
 
         {/* Condition */}
         <div className="mb-5">
-          <label htmlFor="productCondition" className="block mb-2 font-medium font-inter text-black">
+          <label
+            htmlFor="productCondition"
+            className="block mb-2 font-medium font-inter text-black"
+          >
             Condition
           </label>
           <select
@@ -282,6 +320,20 @@ export function AddProduct() {
           </select>
         </div>
 
+        <PickupLocationField
+          value={pickupLocation}
+          error={pickupLocationError}
+          onChange={(nextValue) => {
+            setPickupLocation(nextValue);
+            setPickupLocationError(null);
+          }}
+          onSelectionStatusChange={(hasPendingSelection) => {
+            setHasPendingPickupSelection(hasPendingSelection);
+            if (!hasPendingSelection) {
+              setPickupLocationError(null);
+            }
+          }}
+        />
 
         <div className="flex justify-between gap-3">
           <button

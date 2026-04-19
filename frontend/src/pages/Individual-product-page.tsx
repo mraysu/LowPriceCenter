@@ -7,13 +7,21 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { EmblaOptionsType } from "embla-carousel";
-import { useContext, useEffect, useState } from "react";
+import { Suspense, lazy, useContext, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { get, patch, post } from "src/api/requests";
 import EmblaCarousel from "src/components/EmblaCarousel";
 import { ChatContext } from "src/utils/ChatProvider";
 import { FirebaseContext } from "src/utils/FirebaseProvider";
+
+import type { PickupLocation } from "src/utils/pickupLocation";
+
+const ListingMap = lazy(() => import("src/components/ListingMap"));
+const priceCenterCoordinates = {
+  lat: 32.8793,
+  lng: -117.2367,
+};
 
 export function IndividualProductPage() {
   const navigate = useNavigate();
@@ -28,6 +36,7 @@ export function IndividualProductPage() {
     description: string;
     isMarkedSold: boolean;
     tags: string[];
+    pickupLocation?: PickupLocation;
   }>();
   const [error, setError] = useState<string>();
   const [hasPermissions, setHasPermissions] = useState<boolean>(false);
@@ -152,7 +161,7 @@ export function IndividualProductPage() {
     body.append("price", product.price.toString());
     body.append("description", product.description);
     body.append("userEmail", product.userEmail);
-    product.images.forEach((url) => body.append("existingImages", url));
+    body.append("existingImagesJson", JSON.stringify(product.images));
     body.append("isMarkedSold", String(!product.isMarkedSold));
 
     await patch(`/api/products/${id}`, body)
@@ -180,7 +189,7 @@ export function IndividualProductPage() {
   const [, setTick] = useState(0);
   useEffect(() => {
     if (!isCooling) return;
-    const iv = setInterval(() => setTick((t) => t + 1), 60_000); // 60 000 ms = 1 min
+    const iv = setInterval(() => setTick((t) => t + 1), 60_000); // 60,000 ms = 1 min
     return () => clearInterval(iv);
   }, [isCooling]);
   let buttonLabel = "Interested?";
@@ -210,10 +219,16 @@ export function IndividualProductPage() {
       const userRes = await get(`/api/users/${user.uid}`);
       const userData = await userRes.json();
       setIsSaved(userData.savedProducts.includes(id));
-    } catch (error) {
-      console.error("Error saving product:", error);
+    } catch (caughtError) {
+      console.error("Error saving product:", caughtError);
     }
   };
+
+  const pickupLocation = product?.pickupLocation;
+  const pickupMapCenter = pickupLocation
+    ? { lat: pickupLocation.lat, lng: pickupLocation.lng }
+    : priceCenterCoordinates;
+  const pickupAddressLabel = pickupLocation?.address ?? "UCSD Price Center";
 
   return (
     <>
@@ -252,7 +267,7 @@ export function IndividualProductPage() {
                       ? product.images[currentIndex]
                       : "/productImages/product-placeholder.webp"
                   }
-                  alt={`Image ${currentIndex + 1} of ${product?.name}`}
+                  alt={`${product?.name} preview ${currentIndex + 1}`}
                   className="w-full h-full object-contain"
                 />
                 <button
@@ -331,6 +346,29 @@ export function IndividualProductPage() {
                   ))}
                 </div>
               )}
+              <section className="mt-4">
+                <h2 className="font-inter text-lg font-semibold text-[#182B49]">Pickup Location</h2>
+                <p className="mt-2 font-inter text-sm leading-6 text-[#4B5563]">
+                  {pickupLocation?.address ??
+                    "Older listings still default to UCSD Price Center until a pickup address is added."}
+                </p>
+                <Suspense
+                  fallback={
+                    <div
+                      className="mt-4 h-64 animate-pulse rounded-2xl border border-gray-200 bg-[#F8F8F8]"
+                      aria-label="Loading pickup map section"
+                    />
+                  }
+                >
+                  <ListingMap
+                    center={pickupMapCenter}
+                    className="mt-4"
+                    label={pickupAddressLabel}
+                    markerTitle={pickupAddressLabel}
+                    placeId={pickupLocation?.placeId}
+                  />
+                </Suspense>
+              </section>
               {!hasPermissions && (
                 <div className="flex flex-col gap-2 ">
                   <div
