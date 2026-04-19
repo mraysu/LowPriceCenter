@@ -1,9 +1,12 @@
 import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
 import {
   faArrowUp,
+  faCalendar,
   faCheck,
+  faCheckCircle,
   faHeart as faHeartSolid,
   faPenToSquare,
+  faTag,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { EmblaOptionsType } from "embla-carousel";
@@ -31,6 +34,9 @@ export function IndividualProductPage() {
   const [product, setProduct] = useState<{
     name: string;
     price: number;
+    year: number;
+    category: string;
+    condition: string;
     images: string[];
     userEmail: string;
     description: string;
@@ -346,6 +352,33 @@ export function IndividualProductPage() {
                   ))}
                 </div>
               )}
+
+              <div className="grid grid-cols-3 gap-3 mb-4">
+                <div className="border border-gray-200 rounded-lg p-4 min-h-[96px] bg-white shadow-sm hover:shadow-md transition-shadow">
+                  <div className="flex items-center gap-2 mb-1">
+                    <FontAwesomeIcon icon={faCalendar} className="text-[#00629B] text-sm" />
+                    <span className="font-inter text-gray-500 text-[11px] uppercase tracking-wide">Year</span>
+                  </div>
+                  <p className="font-inter text-black text-base font-semibold">{product?.year}</p>
+                </div>
+
+                <div className="border border-gray-200 rounded-lg p-4 min-h-[96px] bg-white shadow-sm hover:shadow-md transition-shadow">
+                  <div className="flex items-center gap-2 mb-1">
+                    <FontAwesomeIcon icon={faTag} className="text-[#00629B] text-sm" />
+                    <span className="font-inter text-gray-500 text-[11px] uppercase tracking-wide">Category</span>
+                  </div>
+                  <p className="font-inter text-black text-base font-semibold">{product?.category}</p>
+                </div>
+
+                <div className="border border-gray-200 rounded-lg p-4 min-h-[96px] bg-white shadow-sm hover:shadow-md transition-shadow">
+                  <div className="flex items-center gap-2 mb-1">
+                    <FontAwesomeIcon icon={faCheckCircle} className="text-[#00629B] text-sm" />
+                    <span className="font-inter text-gray-500 text-[11px] uppercase tracking-wide">Condition</span>
+                  </div>
+                  <p className="font-inter text-black text-base font-semibold">{product?.condition}</p>
+                </div>
+              </div>
+
               <section className="mt-4">
                 <h2 className="font-inter text-lg font-semibold text-[#182B49]">Pickup Location</h2>
                 <p className="mt-2 font-inter text-sm leading-6 text-[#4B5563]">

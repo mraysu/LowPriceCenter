@@ -77,7 +77,7 @@ function LoadedListingMap({
   className = "",
 }: ListingMapProps) {
   const { isLoaded, loadError } = useJsApiLoader({
-    googleMapsApiKey,
+    googleMapsApiKey: googleMapsApiKey ?? "",
     id: googleMapsScriptId,
     libraries: googleMapsLibraries,
   });
