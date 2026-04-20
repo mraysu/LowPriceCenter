@@ -17,6 +17,11 @@ export default {
         "default-bg": "#FFFFFF",
         "default-teal": "#57DBCE",
         "default-gray": "#D9D9D9",
+        "figma-sand": "#F9D488",
+        "figma-orange": "#F4A71D",
+        "figma-mint": "#53DCCE",
+        "figma-teal": "#0E6F8F",
+        "figma-charcoal": "#222222",
       },
       fontFamily: {
         jetbrains: ["JetBrains Mono", "monospace"],

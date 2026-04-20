@@ -11,6 +11,9 @@ import { Marketplace } from "src/pages/Marketplace";
 import { PageNotFound } from "src/pages/PageNotFound";
 import { Profile } from "src/pages/Profile";
 import { SavedProducts } from "src/pages/SavedProducts";
+import { StudentOrgProfile } from "src/pages/StudentOrgProfile";
+import { StudentOrganizations } from "src/pages/StudentOrganizations";
+import { StudentOrganizationPublicProfile } from "src/pages/StudentOrganizationPublicProfile";
 import ChatProvider from "src/utils/ChatProvider";
 import FirebaseProvider from "src/utils/FirebaseProvider";
 
@@ -80,6 +83,30 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "/student-org-profile",
+        element: (
+          <PrivateRoute>
+            <StudentOrgProfile />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/student-organizations",
+        element: (
+          <PrivateRoute>
+            <StudentOrganizations />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/student-organizations/:id",
+        element: (
+          <PrivateRoute>
+            <StudentOrganizationPublicProfile />
+          </PrivateRoute>
+        ),
+      },
+      {
         path: "*",
         element: <PageNotFound />,
       },
@@ -102,4 +129,3 @@ export default function App() {
     </HelmetProvider>
   );
 }
-
