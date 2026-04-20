@@ -231,7 +231,7 @@ export const addProduct = [
   upload,
   async (req: AuthenticatedRequest, res: Response) => {
     try {
-      const { name, price, description, category, condition } = req.body;
+      const { name, price, description, category, condition, year } = req.body;
       const pickupLocation = parsePickupLocation(req.body as Record<string, unknown>);
       if (!req.user) return res.status(404).json({ message: "User not found" });
       const userId = req.user._id;
@@ -266,6 +266,8 @@ export const addProduct = [
         name,
         price,
         description,
+        year: year ? Number(year) : undefined,
+        category: category || undefined,
         userEmail,
         images,
         condition,

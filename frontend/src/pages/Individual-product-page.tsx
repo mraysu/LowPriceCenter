@@ -298,89 +298,76 @@ export function IndividualProductPage() {
 
             {/* Info Section */}
             <section className="max-w-[100%] md:max-w-[50%] flex-1 flex flex-col">
-              <h1 className="pt-2 font-jetbrains text-black font-bold text-4xl break-words">
+              <h1 className="pt-2 font-jetbrains text-[#182B49] font-bold text-2xl break-words">
                 {product?.name}
               </h1>
 
-              <hr className="my-6 w-full mx-auto h-0 border-[1px] border-solid border-gray-300" />
+              <hr className="my-4 w-full mx-auto border-gray-200" />
 
               {hasPermissions &&
                 (product?.isMarkedSold ? (
                   <button
-                    className="text-lg font-inter py-4 mb-6 font-bold border border-ucsd-blue text-ucsd-blue rounded-md"
+                    className="text-sm font-inter py-2.5 mb-4 font-semibold border border-ucsd-blue text-ucsd-blue rounded-lg w-full"
                     onClick={handleMarkSold}
                   >
                     Renew on Marketplace <FontAwesomeIcon icon={faArrowUp} />
                   </button>
                 ) : (
                   <button
-                    className="text-lg font-inter py-4 mb-6 font-bold bg-ucsd-blue hover:bg-ucsd-darkblue text-white rounded-md transition-colors"
+                    className="text-sm font-inter py-2.5 mb-4 font-semibold bg-ucsd-blue hover:bg-ucsd-darkblue text-white rounded-lg w-full transition-colors"
                     onClick={handleMarkSold}
                   >
                     Mark as Sold <FontAwesomeIcon icon={faCheck} />
                   </button>
                 ))}
 
-              <h2 className="font-inter text-[#35393C] text-base md:text-xl font-normal pb-6">
+              <p className="font-inter text-[#182B49] text-lg font-semibold pb-4">
                 USD ${product?.price?.toFixed(2)}
-              </h2>
+              </p>
               {product?.isMarkedSold && (
-                <div className="bg-red-100 p-5 mb-6">
-                  <p className="font-inter text-black text-base md:text-xl font-normal break-words">
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                  <p className="font-inter text-black text-sm break-words">
                     {hasPermissions
-                      ? "This product has been marked as sold. It will not appear on the marketplace, but others can still be find it under your profile."
+                      ? "This product has been marked as sold. It will not appear on the marketplace, but others can still find it under your profile."
                       : "This product is no longer available."}
                   </p>
                 </div>
               )}
               {product?.description && (
-                <div className="bg-[#F5F0E6] p-5 mb-6">
-                  <p className="font-inter text-black text-base md:text-xl font-normal break-words">
+                <div className="bg-[#F5F0E6] rounded-lg p-4 mb-4">
+                  <p className="font-inter text-black text-sm break-words">
                     {product.description}
                   </p>
                 </div>
               )}
-              {product?.tags && (
-                <div className="flex flex-row flex-wrap gap-2 py-4">
-                  {product.tags.map((tag) => (
-                    <div
-                      key={tag}
-                      className="flex items-center gap-2 p-1 px-2 w-fit bg-slate-200 rounded-2xl"
-                    >
-                      <span className="text-sm font-medium">{tag}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              <div className="grid grid-cols-3 gap-3 mb-4">
-                <div className="border border-gray-200 rounded-lg p-4 min-h-[96px] bg-white shadow-sm hover:shadow-md transition-shadow">
-                  <div className="flex items-center gap-2 mb-1">
-                    <FontAwesomeIcon icon={faCalendar} className="text-[#00629B] text-sm" />
-                    <span className="font-inter text-gray-500 text-[11px] uppercase tracking-wide">Year</span>
+              <div className="grid grid-cols-3 gap-2 mb-4">
+                <div className="border border-gray-200 rounded-lg p-3 bg-white shadow-sm">
+                  <div className="flex items-center gap-1.5 mb-0.5">
+                    <FontAwesomeIcon icon={faCalendar} className="text-[#00629B] text-xs" />
+                    <span className="font-inter text-gray-500 text-[10px] uppercase tracking-wide">Year</span>
                   </div>
-                  <p className="font-inter text-black text-base font-semibold">{product?.year}</p>
+                  <p className="font-inter text-black text-sm font-semibold">{product?.year}</p>
                 </div>
 
-                <div className="border border-gray-200 rounded-lg p-4 min-h-[96px] bg-white shadow-sm hover:shadow-md transition-shadow">
-                  <div className="flex items-center gap-2 mb-1">
-                    <FontAwesomeIcon icon={faTag} className="text-[#00629B] text-sm" />
-                    <span className="font-inter text-gray-500 text-[11px] uppercase tracking-wide">Category</span>
+                <div className="border border-gray-200 rounded-lg p-3 bg-white shadow-sm">
+                  <div className="flex items-center gap-1.5 mb-0.5">
+                    <FontAwesomeIcon icon={faTag} className="text-[#00629B] text-xs" />
+                    <span className="font-inter text-gray-500 text-[10px] uppercase tracking-wide">Category</span>
                   </div>
-                  <p className="font-inter text-black text-base font-semibold">{product?.category}</p>
+                  <p className="font-inter text-black text-sm font-semibold">{product?.category}</p>
                 </div>
 
-                <div className="border border-gray-200 rounded-lg p-4 min-h-[96px] bg-white shadow-sm hover:shadow-md transition-shadow">
-                  <div className="flex items-center gap-2 mb-1">
-                    <FontAwesomeIcon icon={faCheckCircle} className="text-[#00629B] text-sm" />
-                    <span className="font-inter text-gray-500 text-[11px] uppercase tracking-wide">Condition</span>
+                <div className="border border-gray-200 rounded-lg p-3 bg-white shadow-sm">
+                  <div className="flex items-center gap-1.5 mb-0.5">
+                    <FontAwesomeIcon icon={faCheckCircle} className="text-[#00629B] text-xs" />
+                    <span className="font-inter text-gray-500 text-[10px] uppercase tracking-wide">Condition</span>
                   </div>
-                  <p className="font-inter text-black text-base font-semibold">{product?.condition}</p>
+                  <p className="font-inter text-black text-sm font-semibold">{product?.condition}</p>
                 </div>
               </div>
 
-              <section className="mt-4">
-                <h2 className="font-inter text-lg font-semibold text-[#182B49]">Pickup Location</h2>
+              <section className="mt-2">
+                <h2 className="font-inter text-sm font-semibold text-[#182B49]">Pickup Location</h2>
                 <p className="mt-2 font-inter text-sm leading-6 text-[#4B5563]">
                   {pickupLocation?.address ??
                     "Older listings still default to UCSD Price Center until a pickup address is added."}
