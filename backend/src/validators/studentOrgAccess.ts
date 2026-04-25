@@ -12,7 +12,7 @@ import { AuthenticatedRequest } from "src/validators/authUserMiddleware";
  *   "another-org@ucsd.edu",
  */
 const ALLOWED_ORGANIZATION_EMAILS: string[] = [
-  // "mik127@ucsd.edu",
+  "sjammula@ucsd.edu",
 ];
 
 function allowedEmailsSet(): Set<string> {
