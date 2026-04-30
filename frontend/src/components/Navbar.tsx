@@ -1,10 +1,5 @@
 import { faComment, faHeart } from "@fortawesome/free-regular-svg-icons";
-import {
-  faBars,
-  faCartShopping,
-  faMagnifyingGlass,
-  faXmark,
-} from "@fortawesome/free-solid-svg-icons";
+import { faBars, faMagnifyingGlass, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { HTMLAttributes, forwardRef, useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -162,15 +157,6 @@ export function Navbar() {
             </button>
             <MiniSearchbar open={isSearchBarOpen} ref={searchRef} onSubmit={handleSearch} />
           </div>
-
-          <button
-            onClick={() => handleIconClick("/products")}
-            title="Cart"
-            aria-label="Cart"
-            className={iconBtn}
-          >
-            <FontAwesomeIcon icon={faCartShopping} className="text-[16px]" />
-          </button>
 
           <button
             onClick={() => handleIconClick("/messages")}
